@@ -19,7 +19,7 @@ label_encoder = joblib.load(os.path.join(MODEL_PATH, 'label_encoder.pkl'))
 
 
 # GitHub scoring function
-def calculate_github_score(totalContributions, pullRequests, issues, repositoriesContributedTo, followers, repositories, totalStars):
+def calculate_github_score(totalContributions, pullRequests, issues, repositoriesContributedTo, followers, repositories):
     activityScore = 0
     if totalContributions > 0:
         if totalContributions < 100:
@@ -36,15 +36,14 @@ def calculate_github_score(totalContributions, pullRequests, issues, repositorie
     issueScore = min(issues * 1, 20)
     impactScore = prScore + issueScore
 
-    starScore = min(totalStars * 0.3, 25)
     followerScore = min(followers * 0.05, 15)
-    communityScore = starScore + followerScore
+
 
     repoScore = min(repositories * 2, 15)
     contribScore = min(repositoriesContributedTo * 0.5, 15)
     collaborationScore = repoScore + contribScore
 
-    totalGithubScore = activityScore + impactScore + communityScore + collaborationScore
+    totalGithubScore = activityScore + impactScore + collaborationScore + followerScore
     return round(totalGithubScore)
 
 # Onchain scoring function
@@ -123,7 +122,6 @@ def predict():
         data['repositoriesContributedTo'],
         data['followers'],
         data['repositories'],
-        data['totalStars']  # Make sure frontend passes totalStars
     )
 
     onchain_score = calculate_onchain_score(
