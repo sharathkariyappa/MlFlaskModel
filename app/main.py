@@ -7,6 +7,9 @@ import pandas as pd
 import math
 
 app = Flask(__name__)
+@app.route("/ping")
+def ping():
+    return "pong", 200
 
 # Load model and label encoder
 import os
