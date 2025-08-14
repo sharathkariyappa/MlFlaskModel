@@ -41,15 +41,16 @@ def calculate_github_score(totalContributions, pullRequests, issues, repositorie
 
     followerScore = min(followers * 0.05, 15)
 
-
     repoScore = min(repositories * 2, 15)
     contribScore = min(repositoriesContributedTo * 0.5, 15)
     collaborationScore = repoScore + contribScore
 
     totalGithubScore = activityScore + impactScore + collaborationScore + followerScore
-    return round(totalGithubScore)
+    
+    # Normalize to max 50 (original max was 130)
+    normalizedScore = totalGithubScore * (50 / 130)
+    return round(normalizedScore, 2)
 
-# Onchain scoring function
 def calculate_onchain_score(ethBalance, txCount, contractDeployments, tokenBalances, nftCount, daoVotes):
     actualEthBalance = ethBalance if ethBalance < 1e6 else ethBalance / 1e18
 
@@ -85,7 +86,10 @@ def calculate_onchain_score(ethBalance, txCount, contractDeployments, tokenBalan
     governanceScore = min(daoVotes * 2, 30)
 
     totalOnchainScore = wealthScore + activityScore + technicalScore + governanceScore
-    return round(totalOnchainScore)
+    
+    # Normalize to max 50 (original max was 390)
+    normalizedScore = totalOnchainScore * (50 / 390)
+    return round(normalizedScore, 2)
 
 # Predict route
 @app.route('/predict', methods=['POST'])
